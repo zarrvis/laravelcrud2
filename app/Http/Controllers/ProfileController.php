@@ -17,7 +17,7 @@ class ProfileController extends Controller
         $s = $request->input('s');
         $profiles = profile::orderBy('id','DESC')
                                                 ->search($s)
-                                                ->paginate(5);
+                                                ->paginate(10);
         return view('Profiles.index',compact('profiles','s'))
                                                         ->with('i', (request()->input('page', 1) - 1) * 5);
     }
@@ -29,7 +29,7 @@ class ProfileController extends Controller
      */
     public function create()
     {
-        //
+        return view('profiles.create');
     }
 
     /**
@@ -40,8 +40,18 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $this->validate($request, [
+          'name' => 'required',
+          'phone' => 'required',
+          'email' => 'required|email',
+          'address' => 'required'
+        ]);
+
+        // dd($request->all());
+        profile::create($request->all());
+        return redirect()->route('profile.index')
+                                                ->with('success' ,'Profile created succesfully.');
+      }
 
     /**
      * Display the specified resource.
@@ -51,7 +61,9 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        //
+        $profiles = profile::find($id);
+        // return redirect()->route('profile.show',compact('profiles'));
+        return view('profiles.show',compact('profiles'));
     }
 
     /**
@@ -62,7 +74,8 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
-        //
+        $profiles = profile::find($id);
+        return view('profiles.edit',compact('profiles'));
     }
 
     /**
@@ -74,7 +87,17 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all());
+        $this->validate($request ,[
+          'name' => 'required',
+          'phone' => 'required',
+          'email' => 'required|email',
+          'address' => 'required'
+        ]);
+
+        profile::find($id)->update($request->all());
+        return redirect()->route('profile.index')
+                                                  ->with('success','Profiles updated succesfully.');
     }
 
     /**
@@ -85,6 +108,9 @@ class ProfileController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // profile::find($id)->delete();
+        profile::destroy($id);
+        return redirect()->route('profile.index')
+                                                ->with('success','Profile deleted successfully.');
     }
 }
