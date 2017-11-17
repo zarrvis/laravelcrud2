@@ -35,7 +35,9 @@
           </div>
             <div class="panel-body">
                 <form action="{{ route('profile.update', $profiles->id) }}" method="POST" class="form-horizontal">
-                    <input name="_method" type="hidden" value="PATCH">
+                    {{-- ubah method field jadi patch --}}
+                    {{ method_field('PATCH') }}
+                    {{-- <input name="_method" type="hidden" value="PATCH"> --}}
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label class="control-label col-sm-2" >Name</label>
